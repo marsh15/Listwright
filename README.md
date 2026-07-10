@@ -167,6 +167,7 @@ Sample files live in `samples/` and are also exposed to the frontend under `apps
 
 - `mixed-leads.csv`
 - `messy-contacts.csv`
+- `listwright_test_leads.csv` — exact 40-row test file used for the screenshots and demo flow.
 
 ## Tradeoffs
 

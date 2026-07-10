@@ -25,6 +25,7 @@ type PreviewState = {
 };
 
 const samples = [
+  { label: "Listwright test leads", path: "/samples/listwright_test_leads.csv" },
   { label: "Mixed leads", path: "/samples/mixed-leads.csv" },
   { label: "Messy contacts", path: "/samples/messy-contacts.csv" },
 ];
