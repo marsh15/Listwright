@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-07T00:00:00+05:30",
+  "title": "Design System: GrowEasy AI CSV Importer",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Cool Canvas",
+        "canonical": "#F7F8FA",
+        "tonalRamp": ["#171A1F", "#2C323B", "#454D59", "#687282", "#929AA7", "#BBC2CC", "#DDE2EA", "#F7F8FA"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "White Surface",
+        "canonical": "#FFFFFF",
+        "tonalRamp": ["#171A1F", "#333842", "#585F6B", "#7F8794", "#A9B0BA", "#D0D5DC", "#EFF2F5", "#FFFFFF"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Primary Ink",
+        "canonical": "#171A1F",
+        "tonalRamp": ["#050607", "#171A1F", "#303640", "#535B68", "#7D8592", "#A9B0BA", "#D4D8DE", "#F1F3F6"]
+      },
+      "muted-ink": {
+        "role": "neutral",
+        "displayName": "Secondary Ink",
+        "canonical": "#5D6675",
+        "tonalRamp": ["#12151A", "#27303B", "#3F4A59", "#5D6675", "#7F8794", "#A3ABB6", "#CBD1D9", "#F0F3F6"]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Soft Border",
+        "canonical": "#DDE2EA",
+        "tonalRamp": ["#171A1F", "#353B45", "#5C6572", "#89919D", "#B4BBC5", "#DDE2EA", "#ECEFF3", "#FAFBFC"]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Review Blue",
+        "canonical": "#2563EB",
+        "tonalRamp": ["#071739", "#0F2D6F", "#1746A8", "#2563EB", "#5B8AF0", "#94B3F5", "#CADAFB", "#F0F5FF"]
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Success Green",
+        "canonical": "#15803D",
+        "tonalRamp": ["#041F0F", "#0A3D1D", "#105C2D", "#15803D", "#43A866", "#7DCA98", "#BCE8CA", "#EFFAF2"]
+      },
+      "warning": {
+        "role": "tertiary",
+        "displayName": "Warning Amber",
+        "canonical": "#B45309",
+        "tonalRamp": ["#2B1201", "#542704", "#7D3A07", "#B45309", "#D8822F", "#EDB16F", "#F8D9AF", "#FFF4E5"]
+      },
+      "error": {
+        "role": "tertiary",
+        "displayName": "Error Red",
+        "canonical": "#B91C1C",
+        "tonalRamp": ["#2D0505", "#5A0C0C", "#861313", "#B91C1C", "#D64E4E", "#E88A8A", "#F6C7C7", "#FFF0F0"]
+      },
+      "info": {
+        "role": "tertiary",
+        "displayName": "Info Blue",
+        "canonical": "#0369A1",
+        "tonalRamp": ["#021923", "#02364F", "#03547C", "#0369A1", "#2F91C5", "#75B9DD", "#B9DFF0", "#EDF8FC"]
+      }
+    },
+    "typographyMeta": {
+      "title": {
+        "displayName": "Page Title",
+        "purpose": "The app name and single-screen workflow title."
+      },
+      "heading": {
+        "displayName": "Section Heading",
+        "purpose": "Preview, Progress, Results, and other major workflow sections."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Status copy, helper text, and normal UI prose."
+      },
+      "table": {
+        "displayName": "Table",
+        "purpose": "CSV preview, parsed records, skipped records, and mappings."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Metadata, chips, counters, and compact controls."
+      }
+    },
+    "shadows": [
+      {
+        "name": "drag-active",
+        "value": "0 0 0 3px rgba(37, 99, 235, 0.16)",
+        "purpose": "Dropzone focus, drag-over, or keyboard focus emphasis."
+      },
+      {
+        "name": "overlay-low",
+        "value": "0 8px 24px rgba(23, 26, 31, 0.12)",
+        "purpose": "Rare popover or confirmation surfaces if an inline pattern cannot work."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-fast",
+        "value": "150ms cubic-bezier(0.2, 0, 0, 1)",
+        "purpose": "Hover, focus, and compact state changes."
+      },
+      {
+        "name": "state-standard",
+        "value": "220ms cubic-bezier(0.2, 0, 0, 1)",
+        "purpose": "Expandable rows and progress changes."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "640px"
+      },
+      {
+        "name": "desktop-container",
+        "value": "1200px to 1440px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action for Confirm Import and the single best next action.",
+      "html": "<button class=\"ds-btn-primary\">Confirm Import</button>",
+      "css": ".ds-btn-primary { background: #2563EB; color: #FFFFFF; border: 1px solid #2563EB; border-radius: 6px; padding: 10px 16px; font: 600 15px/1.2 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; transition: background 150ms cubic-bezier(0.2, 0, 0, 1), border-color 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-btn-primary:hover { background: #1D4ED8; border-color: #1D4ED8; } .ds-btn-primary:focus-visible { outline: 3px solid rgba(37, 99, 235, 0.28); outline-offset: 2px; } .ds-btn-primary:active { background: #1746A8; } .ds-btn-primary:disabled { background: #BBC2CC; border-color: #BBC2CC; color: #FFFFFF; cursor: not-allowed; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary action for samples, retry, exports, and pagination.",
+      "html": "<button class=\"ds-btn-secondary\">Load sample CSV</button>",
+      "css": ".ds-btn-secondary { background: #FFFFFF; color: #171A1F; border: 1px solid #DDE2EA; border-radius: 6px; padding: 10px 14px; font: 600 15px/1.2 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; transition: border-color 150ms cubic-bezier(0.2, 0, 0, 1), background 150ms cubic-bezier(0.2, 0, 0, 1); } .ds-btn-secondary:hover { background: #F7F8FA; border-color: #BBC2CC; } .ds-btn-secondary:focus-visible { outline: 3px solid rgba(37, 99, 235, 0.22); outline-offset: 2px; } .ds-btn-secondary:active { background: #EFF2F5; } .ds-btn-secondary:disabled { color: #7F8794; cursor: not-allowed; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Compact field style for filters, file metadata, and future controls.",
+      "html": "<label class=\"ds-field\"><span>Rows per page</span><input value=\"50\" /></label>",
+      "css": ".ds-field { display: grid; gap: 6px; color: #5D6675; font: 600 12px/1.3 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; } .ds-field input { width: 160px; background: #FFFFFF; color: #171A1F; border: 1px solid #DDE2EA; border-radius: 6px; padding: 9px 10px; font: 400 14px/1.3 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; } .ds-field input:hover { border-color: #BBC2CC; } .ds-field input:focus-visible { outline: 3px solid rgba(37, 99, 235, 0.22); border-color: #2563EB; }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "status-chip",
+      "description": "Text-first status label for warnings, confidence, and job state.",
+      "html": "<span class=\"ds-chip-warning\">Warning: duplicate row</span>",
+      "css": ".ds-chip-warning { display: inline-flex; align-items: center; gap: 6px; min-height: 24px; border: 1px solid rgba(180, 83, 9, 0.34); background: #FFF4E5; color: #7D3A07; border-radius: 999px; padding: 3px 9px; font: 600 12px/1.3 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; } .ds-chip-warning::before { content: ''; width: 7px; height: 7px; border-radius: 999px; background: #B45309; }"
+    },
+    {
+      "name": "Functional Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Flat bordered container for upload, preview, progress, and result regions.",
+      "html": "<section class=\"ds-panel\"><h2>Local preview</h2><p>No backend or AI import runs before Confirm Import.</p></section>",
+      "css": ".ds-panel { background: #FFFFFF; color: #171A1F; border: 1px solid #DDE2EA; border-radius: 8px; padding: 16px; box-shadow: none; } .ds-panel h2 { margin: 0 0 8px; font: 650 20px/1.3 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; letter-spacing: 0; } .ds-panel p { margin: 0; color: #5D6675; font: 400 15px/1.5 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 70ch; }"
+    },
+    {
+      "name": "Preview Table",
+      "kind": "custom",
+      "refersTo": "preview-table",
+      "description": "Dense review table with sticky headers and horizontal scroll.",
+      "html": "<div class=\"ds-table-wrap\"><table class=\"ds-table\"><thead><tr><th>Email</th><th>Phone</th><th>Status</th></tr></thead><tbody><tr><td>lead@example.com</td><td>+1 555 0142</td><td>new</td></tr></tbody></table></div>",
+      "css": ".ds-table-wrap { overflow: auto; border: 1px solid #DDE2EA; border-radius: 8px; background: #FFFFFF; } .ds-table { width: 100%; min-width: 640px; border-collapse: separate; border-spacing: 0; color: #171A1F; font: 400 13px/1.45 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; } .ds-table th { position: sticky; top: 0; background: #F7F8FA; color: #5D6675; text-align: left; font-weight: 650; border-bottom: 1px solid #DDE2EA; padding: 9px 10px; } .ds-table td { border-bottom: 1px solid #DDE2EA; padding: 9px 10px; white-space: nowrap; } .ds-table tbody tr:hover { background: #F7F8FA; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Import Workbench",
+    "overview": "GrowEasy AI CSV Importer should feel like a precise operational workbench for reviewing messy data. The system is light, quiet, and evidence-first: upload controls, local preview, confirmation boundaries, progress, records, skipped rows, mappings, and exports are arranged so the user always knows what has happened and what is still pending.\n\nThe visual system rejects SaaS marketing, decorative analytics dashboards, generic AI wrapper theatrics, and admin-shell sprawl. The interface should never compete with the CSV data. Density is allowed when it improves review speed, but every dense region must have readable type, stable spacing, semantic headers, and clear actions.",
+    "keyCharacteristics": [
+      "Restrained light UI with one primary blue action color.",
+      "Compact, readable tables with sticky headers and horizontal scrolling.",
+      "Functional panels, not decorative card sections.",
+      "Status color paired with text, icons, or shapes.",
+      "Minimal motion used only for state feedback."
+    ],
+    "rules": [
+      {
+        "name": "The Evidence Color Rule",
+        "body": "Color supplements status but never carries it alone. Every success, warning, error, and info state needs a text label or icon in addition to color.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Action Color Rule",
+        "body": "Blue is for the primary path and selected state. Do not use it as decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Hero Type Rule",
+        "body": "This is a tool, not a landing page. Keep headings concise, fixed-size, and small enough to leave the workflow visible in the first viewport.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Review Rule",
+        "body": "Panels are separated with borders and background, not decorative shadow stacks.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep the upload workflow, sample CSV actions, local preview guarantee, and row limit visible in the first viewport.",
+      "Do use thin neutral borders for panels, tables, inputs, and secondary buttons.",
+      "Do keep tables compact but readable, with sticky headers and horizontal scrolling instead of squeezed columns.",
+      "Do show no-backend and no-AI-before-confirmation copy near the preview and Confirm Import action.",
+      "Do pair status color with text, icons, or shapes.",
+      "Do respect reduced motion and keep transitions between 150ms and 250ms."
+    ],
+    "donts": [
+      "Don't make a SaaS marketing page.",
+      "Don't use decorative analytics dashboards, generic AI wrapper visuals, oversized heroes, card-grid storytelling, or visual clutter.",
+      "Don't add sidebar navigation, admin views, dashboard charts unrelated to import progress, authentication, workspaces, billing, CRM write-back, or persistent import history.",
+      "Don't make dark mode part of v1.",
+      "Don't hide the local preview when backend or AI processing begins.",
+      "Don't rely on color alone for failed, skipped, warning, success, or info states."
+    ]
+  }
+}

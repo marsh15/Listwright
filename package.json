@@ -1,0 +1,24 @@
+{
+  "name": "listwright",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reviewer-friendly AI CSV importer for auditable CRM lead cleanup.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "pretest:e2e": "npm run build",
+    "test:e2e": "node scripts/e2e-sample-flow.mjs",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "start:api": "npm run start -w @listwright/api",
+    "start:web": "npm run start -w @listwright/web"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

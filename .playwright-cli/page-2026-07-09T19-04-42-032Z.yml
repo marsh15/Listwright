@@ -1,0 +1,104 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: G
+        - generic [ref=e6]:
+          - generic [ref=e7]: IMPORT WORKBENCH
+          - heading "GrowEasy AI Importer" [level=1] [ref=e8]
+          - paragraph [ref=e9]: Turn messy lead files into reviewable CRM records.
+      - generic [ref=e10]:
+        - generic [ref=e11]: SAFE DEMO MODE
+        - generic [ref=e12]: 1,000 row limit
+    - navigation "Import progress steps" [ref=e13]:
+      - generic [ref=e14]: Upload
+      - generic [ref=e22]: Preview
+      - generic [ref=e28]: Process
+      - generic [ref=e34]: Results
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - generic [ref=e43]: STEP 1 / 3
+            - heading "Inspect your source file" [level=2] [ref=e44]
+            - paragraph [ref=e45]: Everything stays in your browser until you confirm the import.
+          - generic [ref=e46]:
+            - generic [ref=e47]: ●
+            - text: Local only
+        - generic [ref=e48]:
+          - button "Choose CSV file" [ref=e49]
+          - strong [ref=e55]: Drop a CSV to begin
+          - generic [ref=e56]: Review columns and sample rows before anything leaves this screen.
+          - button "Choose a CSV file" [ref=e57] [cursor=pointer]
+          - generic [ref=e58]: CSV only · up to 1,000 rows
+        - generic "Sample CSV quick loads" [ref=e62]:
+          - generic [ref=e63]: Need a starting point?
+          - button "Load Mixed leads" [ref=e64] [cursor=pointer]
+          - button "Load Messy contacts" [ref=e65] [cursor=pointer]
+        - generic [ref=e70]:
+          - strong [ref=e71]: Preview first, process second
+          - generic [ref=e72]: Backend validation and AI extraction begin only after your explicit confirmation.
+        - generic [ref=e73]:
+          - generic [ref=e74]: 1. Local preview
+          - generic [ref=e75]: 2. Confirmed backend import
+          - generic [ref=e76]: 3. Reviewable exports
+        - generic [ref=e77]:
+          - generic [ref=e78]: Your preview will appear here
+          - generic [ref=e79]: We show the first rows and detected columns so you can catch mapping issues before processing.
+        - generic [ref=e80]:
+          - generic [ref=e81]:
+            - generic [ref=e82]: READY TO REVIEW
+            - strong [ref=e83]: No CSV selected
+            - generic [ref=e84]: Load a sample or choose a file.
+          - button "Confirm import" [disabled] [ref=e85]
+      - generic [ref=e86]:
+        - generic [ref=e87]:
+          - generic [ref=e88]:
+            - heading "Import progress" [level=2] [ref=e89]
+            - paragraph [ref=e90]: Real backend batch status appears after confirmation.
+          - generic [ref=e91]: Not started
+        - progressbar "Import progress 0%" [ref=e92]
+        - generic [ref=e93]:
+          - generic [ref=e94]:
+            - text: Batches
+            - strong [ref=e95]: 0/0
+          - generic [ref=e96]:
+            - text: Processed rows
+            - strong [ref=e97]: "0"
+          - generic [ref=e98]:
+            - text: Imported
+            - strong [ref=e99]: "0"
+          - generic [ref=e100]:
+            - text: Skipped
+            - strong [ref=e101]: "0"
+          - generic [ref=e102]:
+            - text: Failed batches
+            - strong [ref=e103]: "0"
+        - button "Retry failed batches" [disabled] [ref=e105]
+    - region "Import summary" [ref=e106]:
+      - generic [ref=e107]:
+        - generic [ref=e108]: WORKSPACE SUMMARY
+        - strong [ref=e109]: Your output will appear here
+        - generic [ref=e110]: Start with a CSV to unlock parsed records and exportable results.
+      - generic [ref=e111]:
+        - generic [ref=e112]: Total rows
+        - strong [ref=e113]: "0"
+      - generic [ref=e114]:
+        - generic [ref=e115]: Imported
+        - strong [ref=e116]: "0"
+      - generic [ref=e117]:
+        - generic [ref=e118]: Skipped
+        - strong [ref=e119]: "0"
+      - generic [ref=e120]:
+        - generic [ref=e121]: Success rate
+        - strong [ref=e122]: —
+    - generic [ref=e123]:
+      - tablist "Import results" [ref=e124]:
+        - tab "Parsed records (0)" [selected] [ref=e125] [cursor=pointer]
+        - tab "Skipped records (0)" [ref=e126] [cursor=pointer]
+        - tab "Mapping notes (0)" [ref=e127] [cursor=pointer]
+        - tab "Exports" [ref=e128] [cursor=pointer]
+        - tab "Raw JSON" [ref=e129] [cursor=pointer]
+      - tabpanel "Parsed records (0)" [ref=e130]:
+        - generic [ref=e131]: No parsed records yet. Start an import or inspect skipped rows after processing.
+  - region "Notifications alt+T"

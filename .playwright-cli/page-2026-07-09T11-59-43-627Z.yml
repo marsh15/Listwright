@@ -1,0 +1,64 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Listwright" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Software Developer Intern submission, reviewer-friendly and no-login.
+    - generic [ref=e7]: "Demo-safe AI processing: 1,000 row limit"
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - heading "Preview locally" [level=2] [ref=e12]
+          - paragraph [ref=e13]: No backend or AI processing before confirmation.
+        - generic [ref=e14]: "Phase 1: local only"
+      - group "CSV upload and local preview" [ref=e15]:
+        - button "Choose File" [ref=e16]
+        - strong [ref=e17]: Drop a CSV here
+        - generic [ref=e18]: or choose a file, then review rows before import.
+        - button "Choose CSV file" [ref=e19] [cursor=pointer]
+      - generic "Sample CSV quick loads" [ref=e20]:
+        - button "Load Mixed leads" [ref=e21] [cursor=pointer]
+        - button "Load Messy contacts" [ref=e22] [cursor=pointer]
+      - generic [ref=e23]: Backend validates every AI output with shared Zod schemas. In-memory jobs reset on backend restart.
+      - generic [ref=e24]:
+        - generic [ref=e25]: 1. Local preview
+        - generic [ref=e26]: 2. Confirmed backend import
+        - generic [ref=e27]: 3. Reviewable exports
+      - generic [ref=e28]: Load a CSV to inspect the local preview table. No import request is sent yet.
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - strong [ref=e31]: No CSV selected
+          - generic [ref=e32]: Load a sample or choose a file.
+        - button "Confirm import" [disabled] [ref=e33]
+    - generic [ref=e34]:
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - heading "Import progress" [level=2] [ref=e37]
+          - paragraph [ref=e38]: Real backend batch status appears after confirmation.
+        - generic [ref=e39]: Not started
+      - progressbar "Import progress 0%" [ref=e40]
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - text: Batches
+          - strong [ref=e43]: 0/0
+        - generic [ref=e44]:
+          - text: Processed rows
+          - strong [ref=e45]: "0"
+        - generic [ref=e46]:
+          - text: Imported
+          - strong [ref=e47]: "0"
+        - generic [ref=e48]:
+          - text: Skipped
+          - strong [ref=e49]: "0"
+        - generic [ref=e50]:
+          - text: Failed batches
+          - strong [ref=e51]: "0"
+      - button "Retry failed batches" [disabled] [ref=e53]
+  - generic [ref=e54]:
+    - tablist "Import results" [ref=e55]:
+      - tab "Parsed records (0)" [selected] [ref=e56]
+      - tab "Skipped records (0)" [ref=e57]
+      - tab "Mapping notes (0)" [ref=e58]
+      - tab "Exports" [ref=e59]
+    - tabpanel "Parsed records (0)" [ref=e60]:
+      - generic [ref=e61]: No parsed records yet. Start an import or inspect skipped rows after processing.

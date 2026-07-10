@@ -1,0 +1,6 @@
+lead,mail id,contact values,where from,stage,remarks,location,assigned to,created
+"Kabir / spouse","kabir@example.com","mobile +91-77777-88888, backup kabir.alt@example.com","Google Ads","Hot","Wants possession in 2027","Pune, Maharashtra","Ravi","2026-03-01"
+"Mira Sen","","+1 (415) 555-0199","walk in","new","Studio apartment, email not shared","San Francisco, CA","Asha","03/04/2026"
+"Duplicate Mira","","+1 (415) 555-0199","walk in","new","Studio apartment, email not shared","San Francisco, CA","Asha","03/04/2026"
+"No Contact Row","","","website","new","Should be skipped because no email or mobile","Delhi","Ravi","2026-03-05"
+"Chen Li","chen@example.cn","+86 138 0013 8000","referral","qualified","Needs bilingual follow-up","Shanghai","Meera","2026-03-09"
