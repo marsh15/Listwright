@@ -2,6 +2,19 @@
 
 This folder contains the six source-of-truth documents for building the Listwright as a no-login, reviewer-friendly internship submission.
 
+## Live Demo
+
+- [Web app](https://listwright-web.vercel.app/)
+- [API](https://listwright-api.onrender.com)
+
+## Screenshots
+
+![Upload screen](./images/listwright-upload.png)
+
+![Local CSV preview](./images/listwright-preview.png)
+
+![Import results](./images/listwright-results.png)
+
 ## Documents
 
 1. [PRD](./01_PRD.md)

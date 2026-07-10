@@ -2,6 +2,25 @@
 
 Reviewer-friendly AI CSV importer for messy CRM lead spreadsheets. It previews CSV files locally, waits for explicit confirmation, processes rows through an Express async job, validates every AI-shaped result with shared Zod schemas, and exports Listwright-ready CRM data.
 
+## Live Demo
+
+- [Web app](https://listwright-web.vercel.app/)
+- [API](https://listwright-api.onrender.com)
+
+## Screenshots
+
+### Upload
+
+![Listwright upload screen](docs/images/listwright-upload.png)
+
+### Local preview
+
+![Listwright CSV preview](docs/images/listwright-preview.png)
+
+### Import results
+
+![Listwright import results](docs/images/listwright-results.png)
+
 ## Demo Flow
 
 1. Open the web app.
