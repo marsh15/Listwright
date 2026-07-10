@@ -152,6 +152,6 @@ Sample files live in `samples/` and are also exposed to the frontend under `apps
 ## Tradeoffs
 
 - In-memory jobs keep the reviewer demo simple, but they reset on restart and require a single backend instance.
-- The deterministic fallback makes local review possible without credentials. With `OPENAI_API_KEY`, the API attempts structured LLM mapping and still validates every output.
+- The deterministic fallback makes local review possible without credentials. With `OPENAI_API_KEY`, the API attempts structured LLM mapping in five-row batches so timeouts remain isolated and retry resends only small failed batches. Every output still passes backend validation.
 - Frontend virtualization is intentionally lightweight: preview rendering is capped for review speed while backend processing honors `IMPORT_ROW_LIMIT`.
 - No auth, Postgres, Prisma, admin views, import history, billing, workspaces, or CRM write-back are included.

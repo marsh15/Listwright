@@ -34,6 +34,8 @@ Mapping notes are batch-level or global. The prompt explicitly includes allowed 
 
 When no API key is present, the backend uses the deterministic extractor so reviewers can still run the whole workflow locally.
 
+AI batches are limited to five rows to keep structured requests bounded. A timed-out batch remains visibly failed and retryable; retrying resends only those small failed batches, while successful AI results remain intact.
+
 ## 4. Backend Normalization
 
 The backend normalizes model-shaped records after extraction:
@@ -74,6 +76,6 @@ CSV export contains only the exact Listwright CRM columns. JSON export contains 
 
 - Jobs are in memory and reset on backend restart.
 - Deployed demos should use one backend instance.
-- The deterministic fallback is useful for review but less semantically flexible than model extraction.
+- The deterministic fallback keeps imports reviewable without credentials, but it is less semantically flexible than model extraction.
 - Batches are processed in-process, not through a durable queue.
 - Advanced frontend virtualization is intentionally limited for v1.

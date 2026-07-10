@@ -23,7 +23,9 @@ export function startJobProcessing(job: ImportJob, batches = job.batches) {
   });
 }
 
-async function processBatches(job: ImportJob, batches: ImportBatch[]) {
+type BatchExtractor = typeof extractBatch;
+
+export async function processBatches(job: ImportJob, batches: ImportBatch[], extractor: BatchExtractor = extractBatch) {
   job.status = "processing";
   updateCounts(job);
 
@@ -34,7 +36,7 @@ async function processBatches(job: ImportJob, batches: ImportBatch[]) {
     updateCounts(job);
 
     try {
-      const aiResult = await extractBatch(batch.sourceRows, batch.id);
+      const aiResult = await extractor(batch.sourceRows, batch.id);
       const normalized = normalizeBatchResult(aiResult, batch.sourceRows, batch.id);
       job.records.push(...normalized.imported);
       job.skippedRecords.push(...normalized.skipped);

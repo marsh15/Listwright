@@ -26,7 +26,7 @@ export function preprocessRows(rows: Record<string, string>[]): SourceRow[] {
   });
 }
 
-export function chunkRows(rows: SourceRow[], size = 25) {
+export function chunkRows(rows: SourceRow[], size = 5) {
   const batches: SourceRow[][] = [];
   for (let index = 0; index < rows.length; index += size) {
     batches.push(rows.slice(index, index + size));

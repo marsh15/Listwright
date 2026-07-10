@@ -6,10 +6,10 @@ import { ALLOWED_CRM_STATUSES, ALLOWED_DATA_SOURCES, CRM_CSV_COLUMNS, type CrmRe
 import { getHealthResponse, paginate, parseCorsOrigin } from "./app.js";
 import { formatCrmCsv } from "./exports/format.js";
 import { extractDeterministically } from "./ai/deterministic.js";
-import { startJobProcessing } from "./jobs/processor.js";
+import { processBatches, startJobProcessing } from "./jobs/processor.js";
 import { updateCounts } from "./jobs/store.js";
 import { parseCsvBuffer } from "./parsing/csv.js";
-import { preprocessRows } from "./parsing/preprocess.js";
+import { chunkRows, preprocessRows } from "./parsing/preprocess.js";
 import { normalizeBatchResult } from "./validation/normalize.js";
 import type { ImportBatch, ImportJob, SourceRow } from "./types.js";
 
@@ -147,6 +147,50 @@ test("retry processing only reprocesses failed batches and keeps completed recor
   assert.deepEqual(job.records.map((record) => record.crm.email).sort(), ["done@example.com", "retry@example.com"]);
 });
 
+test("wide CSV imports use small AI batches", () => {
+  const rows = Array.from({ length: 40 }, (_, index) => makeSourceRow(index + 2, {
+    email: `lead-${index}@example.com`,
+  }));
+
+  assert.deepEqual(chunkRows(rows).map((batch) => batch.length), Array(8).fill(5));
+});
+
+test("a timed-out small batch stays retryable while later AI batches continue", async () => {
+  const rows = Array.from({ length: 10 }, (_, index) => makeSourceRow(index + 2, {
+    name: `Lead ${index}`,
+    email: `lead-${index}@example.com`,
+  }));
+  const batches = createTestBatches(chunkRows(rows));
+  const job = makeJob(batches, []);
+  const attemptedBatchIds: string[] = [];
+
+  await processBatches(job, batches, async (batchRows, batchId) => {
+    attemptedBatchIds.push(batchId);
+    if (batchId === batches[0]?.id) {
+      const timeout = new Error("The operation was aborted due to timeout");
+      timeout.name = "TimeoutError";
+      throw timeout;
+    }
+    return extractDeterministically(batchRows, batchId);
+  });
+
+  assert.deepEqual(attemptedBatchIds, batches.map((batch) => batch.id));
+  assert.equal(job.status, "partial_failed");
+  assert.equal(job.failedBatches, 1);
+  assert.equal(job.completedBatches, 1);
+  assert.equal(job.importedCount, 5);
+  assert.equal(job.errors[0]?.retryable, true);
+
+  const failed = batches.filter((batch) => batch.status === "failed");
+  for (const batch of failed) batch.status = "queued";
+  updateCounts(job);
+  await processBatches(job, failed, (batchRows, batchId) => Promise.resolve(extractDeterministically(batchRows, batchId)));
+
+  assert.equal(job.status, "completed");
+  assert.equal(job.failedBatches, 0);
+  assert.equal(job.importedCount, 10);
+});
+
 test("progress counts rows attempted by failed batches", () => {
   const failedRow = makeSourceRow(2, { name: "Failed", email: "failed@example.com" });
   const failedBatch = makeBatch("batch-failed-only", "failed", [failedRow]);
@@ -203,6 +247,10 @@ function makeBatch(id: string, status: ImportBatch["status"], sourceRows: Source
     attempts: status === "completed" ? 1 : 0,
     sourceRows,
   };
+}
+
+function createTestBatches(chunks: SourceRow[][]) {
+  return chunks.map((sourceRows, index) => makeBatch(`batch-${index + 1}`, "queued", sourceRows));
 }
 
 function makeImportedRecord(row: SourceRow, crm: CrmRecord): ImportedRecord {
