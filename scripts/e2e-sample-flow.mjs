@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 
 const apiPort = Number(process.env.E2E_API_PORT ?? 4000);
 const webPort = Number(process.env.E2E_WEB_PORT ?? 3100);
@@ -9,9 +9,10 @@ const playwrightCli = process.env.PLAYWRIGHT_CLI ?? "playwright-cli";
 const children = [];
 
 try {
+  buildForE2e();
   start("node", ["apps/api/dist/index.js"], {
     PORT: String(apiPort),
-    CORS_ORIGIN: webBaseUrl,
+    CORS_ORIGIN: `${webBaseUrl}/`,
   });
   start("node", ["node_modules/next/dist/bin/next", "start", "apps/web", "-p", String(webPort)], {
     NEXT_PUBLIC_API_BASE_URL: apiBaseUrl,
@@ -41,7 +42,7 @@ try {
   await runCli(["close"], { allowFailure: true });
 
   const result = parseLastJson(raw);
-  assert.equal(result.title, "GrowEasy AI Importer");
+  assert.equal(result.title, "Listwright");
   assert.match(result.body, /Inspect your source file/);
   assert.match(result.body, /Parsed records/);
   assert.match(result.csvHref, /export\.csv$/);
@@ -50,6 +51,15 @@ try {
 } finally {
   await runCli(["close"], { allowFailure: true }).catch(() => undefined);
   await stopChildren();
+}
+
+function buildForE2e() {
+  const result = spawnSync("npm", ["run", "build"], {
+    env: { ...process.env, NEXT_PUBLIC_API_BASE_URL: apiBaseUrl },
+    stdio: "inherit",
+  });
+  if (result.error) throw result.error;
+  if (result.status !== 0) throw new Error(`Production build failed with exit code ${result.status ?? "unknown"}`);
 }
 
 function start(command, args, env) {

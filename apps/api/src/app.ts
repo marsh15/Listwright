@@ -33,13 +33,7 @@ export function createApp(options: CreateAppOptions = {}) {
     ? Math.min(configuredRowLimit, DEFAULT_IMPORT_ROW_LIMIT)
     : DEFAULT_IMPORT_ROW_LIMIT;
 
-  const configuredCorsOrigin = process.env.CORS_ORIGIN?.trim();
-  const corsOrigin = !configuredCorsOrigin
-    ? "http://localhost:3000"
-    : configuredCorsOrigin === "*"
-      ? "*"
-      : configuredCorsOrigin.split(",").map((origin) => origin.trim()).filter(Boolean);
-  app.use(cors({ origin: corsOrigin }));
+  app.use(cors({ origin: parseCorsOrigin(process.env.CORS_ORIGIN) }));
   app.use(express.json());
 
   app.get("/health", (_req, res) => {
@@ -163,6 +157,18 @@ export function createApp(options: CreateAppOptions = {}) {
   });
 
   return app;
+}
+
+export function parseCorsOrigin(value: string | undefined) {
+  const configuredCorsOrigin = value?.trim();
+  return !configuredCorsOrigin
+    ? "http://localhost:3000"
+    : configuredCorsOrigin === "*"
+      ? "*"
+      : configuredCorsOrigin
+        .split(",")
+        .map((origin) => origin.trim().replace(/\/+$/, ""))
+        .filter(Boolean);
 }
 
 export function getHealthResponse() {

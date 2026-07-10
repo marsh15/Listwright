@@ -3,7 +3,7 @@ import { test } from "node:test";
 
 import { ALLOWED_CRM_STATUSES, ALLOWED_DATA_SOURCES, CRM_CSV_COLUMNS, type CrmRecord, type ImportedRecord } from "@listwright/shared";
 
-import { getHealthResponse, paginate } from "./app.js";
+import { getHealthResponse, paginate, parseCorsOrigin } from "./app.js";
 import { formatCrmCsv } from "./exports/format.js";
 import { extractDeterministically } from "./ai/deterministic.js";
 import { startJobProcessing } from "./jobs/processor.js";
@@ -18,6 +18,13 @@ test("health route exposes the Listwright API identity", async () => {
     status: "ok",
     service: "listwright-api",
   });
+});
+
+test("CORS normalizes configured frontend origins with trailing slashes", () => {
+  assert.deepEqual(
+    parseCorsOrigin("https://listwright-web.vercel.app/, https://preview.example.com/"),
+    ["https://listwright-web.vercel.app", "https://preview.example.com"],
+  );
 });
 
 test("CSV parsing enforces the row limit and keeps parseable rows", () => {
