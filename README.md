@@ -4,8 +4,8 @@ Reviewer-friendly AI CSV importer for messy CRM lead spreadsheets. It previews C
 
 ## Live Demo
 
-- [Web app](https://listwright-web.vercel.app/)
-- [API](https://listwright-api.onrender.com)
+- **Frontend / Web App:** https://listwright-web.vercel.app/
+- **Backend / Render API:** https://listwright-api.onrender.com
 
 ## Screenshots
 
