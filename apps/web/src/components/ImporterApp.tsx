@@ -3,6 +3,7 @@
 import {
   DEFAULT_IMPORT_ROW_LIMIT,
   CRM_CSV_COLUMNS,
+  type HealthResponse,
   type ImportedRecordsPage,
   type ImportJobResponse,
   type ImportJobSummary,
@@ -20,7 +21,10 @@ type PreviewState = {
   file: File;
   fileName: string;
   columns: string[];
-  rows: Record<string, string>[];
+  rows: Array<{
+    id: string;
+    values: Record<string, string>;
+  }>;
   errors: string[];
 };
 
@@ -39,6 +43,7 @@ const resultTabs = [
 ] as const;
 
 type ResultTab = (typeof resultTabs)[number]["id"];
+type ServiceStatus = "checking" | "online" | "offline";
 
 export function ImporterApp() {
   const [preview, setPreview] = useState<PreviewState | null>(null);
@@ -51,6 +56,7 @@ export function ImporterApp() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [serviceStatus, setServiceStatus] = useState<ServiceStatus>("checking");
   const tabRefs = useRef<Record<ResultTab, HTMLButtonElement | null>>({
     parsed: null,
     skipped: null,
@@ -68,9 +74,21 @@ export function ImporterApp() {
   const currentStep = !preview ? 0 : !job ? 1 : terminalJob ? 3 : 2;
   const successRate = job && job.totalRows > 0 ? Math.round((job.importedCount / job.totalRows) * 100) : 0;
 
+  const resetJobState = useCallback(() => {
+    setJob(null);
+    setRecordsPage(null);
+    setSkippedPage(null);
+    setRecordsPageNumber(1);
+    setSkippedPageNumber(1);
+    setActiveTab("parsed");
+    setExpanded(null);
+  }, []);
+
   const parseFile = useCallback((file: File) => {
     setError("");
     if (!file.name.toLowerCase().endsWith(".csv")) {
+      setPreview(null);
+      resetJobState();
       setError("Choose a CSV file to continue.");
       toast.error("That file is not a CSV", { description: "Choose a .csv file to preview." });
       return;
@@ -79,8 +97,12 @@ export function ImporterApp() {
       header: true,
       skipEmptyLines: "greedy",
       complete: (result) => {
-        const rows = result.data.map((row) => sanitizeRow(row));
-        const columns = result.meta.fields?.filter(Boolean) ?? Object.keys(rows[0] ?? {});
+        const parsedRows = result.data.map((row) => sanitizeRow(row));
+        const columns = result.meta.fields?.filter(Boolean) ?? Object.keys(parsedRows[0] ?? {});
+        const rows = parsedRows.map((row, rowIndex) => ({
+          id: `${file.name}:${rowIndex + 1}:${rowFingerprint(row, columns)}`,
+          values: row,
+        }));
         setPreview({
           file,
           fileName: file.name,
@@ -88,11 +110,12 @@ export function ImporterApp() {
           rows,
           errors: result.errors.slice(0, 3).map((item) => item.message),
         });
+        resetJobState();
         toast.success("CSV preview ready", { description: `${rows.length.toLocaleString()} rows detected locally.` });
       },
       error: (parseError) => setError(parseError.message),
     });
-  }, []);
+  }, [resetJobState]);
 
   const loadSample = async (samplePath: string) => {
     setError("");
@@ -192,16 +215,40 @@ export function ImporterApp() {
 
   useEffect(() => {
     if (!job) return;
+    let cancelled = false;
     const loadResults = async () => {
       if (job.importedCount > 0 || ["completed", "partial_failed", "failed"].includes(job.status)) {
-        setRecordsPage(await apiFetch<ImportedRecordsPage>(`/api/imports/${job.id}/records?page=${recordsPageNumber}&limit=100`));
-        setSkippedPage(await apiFetch<SkippedRecordsPage>(`/api/imports/${job.id}/skipped?page=${skippedPageNumber}&limit=100`));
+        const [nextRecordsPage, nextSkippedPage] = await Promise.all([
+          apiFetch<ImportedRecordsPage>(`/api/imports/${job.id}/records?page=${recordsPageNumber}&limit=100`),
+          apiFetch<SkippedRecordsPage>(`/api/imports/${job.id}/skipped?page=${skippedPageNumber}&limit=100`),
+        ]);
+        if (cancelled) return;
+        setRecordsPage(nextRecordsPage);
+        setSkippedPage(nextSkippedPage);
       }
     };
     void loadResults().catch((resultError) => {
+      if (cancelled) return;
       setError(resultError instanceof Error ? resultError.message : "Could not load results");
     });
+    return () => {
+      cancelled = true;
+    };
   }, [job, recordsPageNumber, skippedPageNumber]);
+
+  useEffect(() => {
+    let cancelled = false;
+    apiFetch<HealthResponse>("/health")
+      .then(() => {
+        if (!cancelled) setServiceStatus("online");
+      })
+      .catch(() => {
+        if (!cancelled) setServiceStatus("offline");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <main className="app-shell">
@@ -215,7 +262,8 @@ export function ImporterApp() {
           </div>
         </div>
         <div className="topbar-meta">
-          <span className="meta-label">SAFE DEMO MODE</span>
+          <span className="meta-label">Safe demo mode</span>
+          <span className={`limit-chip service-${serviceStatus}`}>API {formatServiceStatus(serviceStatus)}</span>
           <span className="limit-chip">{DEFAULT_IMPORT_ROW_LIMIT.toLocaleString()} row limit</span>
         </div>
       </header>
@@ -280,8 +328,8 @@ export function ImporterApp() {
 
           {job?.errors.length ? (
             <div className="error-list">
-              {job.errors.slice(-3).map((jobError, index) => (
-                <div key={`${jobError.createdAt}-${index}`}>Warning: {jobError.message}</div>
+              {job.errors.slice(-3).map((jobError) => (
+                <div key={`${jobError.batchId ?? "job"}-${jobError.createdAt}-${jobError.message}`}>Warning: {jobError.message}</div>
               ))}
             </div>
           ) : null}
@@ -398,9 +446,9 @@ function PreviewTable({ preview }: { preview: PreviewState | null }) {
           </thead>
           <tbody>
             {preview.rows.slice(0, 80).map((row, index) => (
-              <tr key={index}>
+              <tr key={row.id}>
                 <td className="row-number">{index + 1}</td>
-                {preview.columns.map((column) => <td key={column}>{row[column] || ""}</td>)}
+                {preview.columns.map((column) => <td key={column}>{row.values[column] || ""}</td>)}
               </tr>
             ))}
           </tbody>
@@ -595,8 +643,18 @@ function formatStatus(status: ImportJobSummary["status"] | undefined) {
   return status.replace(/_/g, " ");
 }
 
+function formatServiceStatus(status: ServiceStatus) {
+  if (status === "checking") return "checking";
+  if (status === "online") return "online";
+  return "offline";
+}
+
 function sanitizeRow(row: Record<string, unknown>) {
   return Object.fromEntries(Object.entries(row).map(([key, value]) => [key, String(value ?? "").replace(/\r?\n/g, " ").trim()]));
+}
+
+function rowFingerprint(row: Record<string, string>, columns: string[]) {
+  return columns.map((column) => row[column] ?? "").join("|").slice(0, 120);
 }
 
 function formatFileSize(bytes: number) {
