@@ -21,15 +21,22 @@ export function normalizeBatchResult(result: AiBatchResult, rows: SourceRow[], b
   const rowsByNumber = new Map(rows.map((row) => [row.rowNumber, row]));
   const imported: ImportedRecord[] = [];
   const skipped: SkippedRecord[] = [];
-  const mappingNotes = dedupeMappingNotes(result.mappingNotes.map((note) => MappingNoteSchema.parse({
-    id: note.id || randomUUID(),
-    scope: note.scope || "batch",
-    batchId: note.batchId || batchId,
-    sourceColumn: note.sourceColumn,
-    targetField: note.targetField,
-    note: note.note,
-    confidence: clamp(note.confidence ?? 0.7),
-  })));
+  const mappingNoteIdBySourceId = new Map<string, string>();
+  const mappingNotes = dedupeMappingNotes(result.mappingNotes.map((note, index) => {
+    const sourceId = clean(note.id) || randomUUID();
+    const normalizedId = `${batchId}:${index + 1}:${sourceId}`;
+    if (!mappingNoteIdBySourceId.has(sourceId)) mappingNoteIdBySourceId.set(sourceId, normalizedId);
+
+    return MappingNoteSchema.parse({
+      id: normalizedId,
+      scope: note.scope || "batch",
+      batchId,
+      sourceColumn: note.sourceColumn,
+      targetField: note.targetField,
+      note: note.note,
+      confidence: clamp(note.confidence ?? 0.7),
+    });
+  }));
 
   const skippedRows = new Set<number>();
   for (const aiSkipped of result.skippedRecords) {
@@ -74,6 +81,10 @@ export function normalizeBatchResult(result: AiBatchResult, rows: SourceRow[], b
       continue;
     }
 
+    const mappingNoteIds = aiRecord?.mappingNoteIds === undefined
+      ? mappingNotes.map((note) => note.id)
+      : unique(aiRecord.mappingNoteIds.map((id) => mappingNoteIdBySourceId.get(clean(id)) ?? ""));
+
     imported.push(ImportedRecordSchema.parse({
       id: randomUUID(),
       rowNumber: row.rowNumber,
@@ -81,7 +92,7 @@ export function normalizeBatchResult(result: AiBatchResult, rows: SourceRow[], b
       crm: parsed.data,
       confidence: clamp(aiRecord?.confidence ?? 0.76),
       warnings: unique([...(aiRecord?.warnings ?? []), ...row.deterministicSignals.warnings]),
-      mappingNoteIds: aiRecord?.mappingNoteIds ?? mappingNotes.map((note) => note.id),
+      mappingNoteIds,
     }));
   }
 

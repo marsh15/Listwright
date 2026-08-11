@@ -6,6 +6,7 @@ import { ALLOWED_CRM_STATUSES, ALLOWED_DATA_SOURCES, CRM_CSV_COLUMNS, type CrmRe
 import { getHealthResponse, paginate, parseCorsOrigin } from "./app.js";
 import { formatCrmCsv } from "./exports/format.js";
 import { extractDeterministically } from "./ai/deterministic.js";
+import { loadRootEnv } from "./env.js";
 import { processBatches, startJobProcessing } from "./jobs/processor.js";
 import { updateCounts } from "./jobs/store.js";
 import { parseCsvBuffer } from "./parsing/csv.js";
@@ -18,6 +19,23 @@ test("health route exposes the Listwright API identity", async () => {
     status: "ok",
     service: "listwright-api",
   });
+});
+
+test("root env loader keeps shell values and loads missing demo config", () => {
+  const previousApiKey = process.env.OPENAI_API_KEY;
+  const previousModel = process.env.OPENAI_MODEL;
+  process.env.OPENAI_API_KEY = "from-shell";
+  delete process.env.OPENAI_MODEL;
+
+  loadRootEnv(new URL("../../../.env.example", import.meta.url).pathname);
+
+  assert.equal(process.env.OPENAI_API_KEY, "from-shell");
+  assert.equal(process.env.OPENAI_MODEL, "gpt-4o-mini");
+
+  if (previousApiKey === undefined) delete process.env.OPENAI_API_KEY;
+  else process.env.OPENAI_API_KEY = previousApiKey;
+  if (previousModel === undefined) delete process.env.OPENAI_MODEL;
+  else process.env.OPENAI_MODEL = previousModel;
 });
 
 test("CORS normalizes configured frontend origins with trailing slashes", () => {
@@ -83,6 +101,35 @@ test("normalization appends extra contacts to crm_note and validates final CRM o
   assert.match(result.imported[0]?.crm.crm_note ?? "", /VIP lead/);
   assert.match(result.imported[0]?.crm.crm_note ?? "", /p\.rao@example\.com/);
   assert.match(result.imported[0]?.crm.crm_note ?? "", /9123456789/);
+});
+
+test("normalization namespaces AI mapping note IDs by batch and preserves record references", () => {
+  const firstRow = makeSourceRow(2, { email: "first@example.com" });
+  const secondRow = makeSourceRow(3, { email: "second@example.com" });
+  const mappingNote = {
+    id: "1",
+    scope: "batch" as const,
+    sourceColumn: "email",
+    targetField: "email",
+    note: "Mapped the source email column.",
+  };
+  const makeResult = (row: SourceRow) => ({
+    records: [{
+      rowNumber: row.rowNumber,
+      crm: { email: row.raw.email ?? "" },
+      mappingNoteIds: ["1"],
+    }],
+    skippedRecords: [],
+    mappingNotes: [mappingNote],
+  });
+
+  const first = normalizeBatchResult(makeResult(firstRow), [firstRow], "batch-a");
+  const second = normalizeBatchResult(makeResult(secondRow), [secondRow], "batch-b");
+
+  assert.equal(first.mappingNotes[0]?.id, "batch-a:1:1");
+  assert.equal(second.mappingNotes[0]?.id, "batch-b:1:1");
+  assert.deepEqual(first.imported[0]?.mappingNoteIds, ["batch-a:1:1"]);
+  assert.deepEqual(second.imported[0]?.mappingNoteIds, ["batch-b:1:1"]);
 });
 
 test("normalization uses the GrowEasy status and source allowlists", () => {
